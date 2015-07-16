@@ -74,3 +74,8 @@ class Inventory():
     def get_space_used(self):
         return sum([v for k,v in self.goods.items()])
 
+    def __repr__(self):
+        str = "<Inventory:"
+        for k,v in self.goods.items():
+            str += " %s: %r/%r" % (k, v, self.ideal.get(k, 0))
+        return str+">"

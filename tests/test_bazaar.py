@@ -78,7 +78,6 @@ class TestBazaar(unittest.TestCase):
         self.assertEqual(self.actors[1].get_inventory("A"), 1)
 
     def test_simulate(self):
-        self.skipTest("Not implemented")
         commodities = {"A": {}, "B": {}, "C": {}, "AB": {"A":1, "B": 1}, "BC": {"B": 1, "C": 1}, "CA": {"C": 1, "A": 1}, "ABBC": {"AB": 1, "BC": 1}, "BCCA": {"BC": 1, "CA": 1}, "CAAB": {"CA":1,"AB":1}}
         actors = [Actor("A"),Actor("A"),Actor("A"), Actor("B"), Actor("B"), Actor("B"), Actor("C"), Actor("C"), Actor("C"), Actor("AB"), Actor("AB"), Actor("AB"), Actor("BC"), Actor("BC"), Actor("BC"), Actor("CA"), Actor("CA"), Actor("CA"), Actor("ABBC"), Actor("ABBC"), Actor("ABBC"), Actor("BCCA"), Actor("BCCA"), Actor("BCCA"), Actor("CAAB"), Actor("CAAB"), Actor("CAAB")]
         bazaar = Bazaar(commodities, actors)

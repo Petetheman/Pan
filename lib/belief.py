@@ -31,3 +31,7 @@ class Belief():
 
     def to_list(self):
         return [self.lower, self.upper]
+
+    def __repr__(self):
+        str = "<Belief %r..%r>" % (self.lower, self.upper)
+        return str
