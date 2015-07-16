@@ -2,7 +2,8 @@ __author__ = 'Petter'
 import unittest
 
 from Pan.lib.actor import Actor
-from lib.bazaar import Bazaar
+from Pan.lib.bazaar import Bazaar
+from Pan.lib.belief import Belief
 
 
 class TestActor(unittest.TestCase):
@@ -12,9 +13,9 @@ class TestActor(unittest.TestCase):
         self.bazaar = Bazaar(self.commodities, [self.actor])
 
     def test_init(self):
-        self.assertEqual([0.5,1.5], self.actor.get_belief("A"))
-        self.assertEqual([0.5,1.5], self.actor.get_belief("B"))
-        self.assertEqual([1.5,4.5], self.actor.get_belief("AB"))
+        self.assertEqual([0.5,1.5], self.actor.get_belief("A").to_list())
+        self.assertEqual([0.5,1.5], self.actor.get_belief("B").to_list())
+        self.assertEqual([1.5,4.5], self.actor.get_belief("AB").to_list())
 
         self.assertEqual([0.5,1.5], self.actor.get_clearing_price("A"))
         self.assertEqual([0.5,1.5], self.actor.get_clearing_price("B"))
@@ -22,15 +23,14 @@ class TestActor(unittest.TestCase):
 
     def test_get_price_belief(self):
         price = self.actor.get_belief("A")
-        self.assertEqual([0.5, 1.5], price)
+        self.assertEqual([0.5, 1.5], price.to_list())
 
     def test_update_price_belief(self):
-        #Widen 0.05 of distance to market_mean and Move half of distance to market mean
         self.bazaar.set_history("price", "A", [8,8,8,8,8])
-        belief = self.actor.set_belief("A", [3.5,4.5])
-        self.actor.update_belief(self.bazaar, "sell", "A", False, 2)
+        belief = self.actor.set_belief("A", Belief(3.5,4.5))
+        self.actor.update_belief(self.bazaar, "sell", "A", False)
         belief = self.actor.get_belief("A")
-        self.assertEqual([5.3, 6.7], belief)
+        self.assertEqual([5.3, 6.7], belief.to_list())
 
     def test_get_clearing_favorability(self):
         result = self.actor.get_clearing_favorability(0,0,10)

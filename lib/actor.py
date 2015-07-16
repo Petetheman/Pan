@@ -1,9 +1,9 @@
 __author__ = 'Petter'
 from random import uniform
-
-from lib.inventory import Inventory
+from collections import defaultdict
+from Pan.lib.inventory import Inventory
 from Pan.lib.offer import Offer
-
+from Pan.lib.belief import Belief
 
 class Actor():
     SIGNIFICANT = 0.25
@@ -39,7 +39,7 @@ class Actor():
             trades.append(price*1.5)
 
             self.clearing_prices[commodity] = list(trades)
-            self.price_beliefs[commodity] = list(trades)
+            self.price_beliefs[commodity] = Belief(*trades)
 
 
 
@@ -77,7 +77,7 @@ class Actor():
 
 
     def determine_price(self, commodity_id):
-        return uniform(*self.get_belief(commodity_id))
+        return self.get_belief(commodity_id).random()
 
     def determine_sale_quantity(self, bazaar, commodity_id):
         mean = bazaar.avg_history("price", commodity_id, self.lookback)
@@ -99,20 +99,21 @@ class Actor():
     def update_belief(self, bazaar, act, commodity_id, success, price=None):
         public_mean_price = bazaar.get_history("price", commodity_id,1)
         belief = self.get_belief(commodity_id)
-        mean = (belief[0]+belief[1])/2
+        mean = belief.mean()
         delta = mean-public_mean_price
 
         if success:
             self.add_clearing_price(commodity_id, price)
-
+            belief.narrow()
             if act == "buy" and delta > Actor.SIGNIFICANT:
-                self.move_belief(commodity_id, delta)
+                belief.move(public_mean_price)
             elif act == "sell" and delta < -Actor.SIGNIFICANT:
-                self.move_belief(commodity_id, delta)
-            self.narrow_belief(commodity_id, mean)
+                belief.move(public_mean_price)
+
         else:
-            self.move_belief(commodity_id, delta)
-            self.widen_belief(commodity_id, delta)
+            belief.widen()
+            belief.move(public_mean_price)
+
 
     def set_belief(self, commodity_id, belief):
         self.price_beliefs[commodity_id] = belief
@@ -121,34 +122,6 @@ class Actor():
     def get_belief(self, commodity_id):
         return self.price_beliefs[commodity_id]
 
-    def widen_belief(self, commodity_id, mean, wobble=0.05):
-        belief = self.get_belief(commodity_id)
-        belief[0] -= mean*wobble
-        belief[1] += mean*wobble
-
-        if belief[0]<=0:
-            belief[0] = 0.01
-        if belief[1] <= belief[0]:
-            belief[1] = belief[0]+0.01
-        return True
-
-    def narrow_belief(self, commodity_id, mean, wobble=0.05):
-        belief = self.get_belief(commodity_id)
-        belief[0] += mean*wobble
-        belief[1] -= mean*wobble
-        if belief[1] <= belief[0]:
-            belief[1] = belief[0]+0.01
-        return True
-
-    def move_belief(self, commodity_id, delta_mean_to_market):
-        belief = self.get_belief(commodity_id)
-        belief[0] -= delta_mean_to_market/2
-        belief[1] -= delta_mean_to_market/2
-        if belief[0]<=0:
-            belief[0] = 0.01
-        if belief[1] <= belief[0]:
-            belief[1] = belief[0]+0.01
-        return True
 
 
 

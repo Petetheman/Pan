@@ -2,8 +2,8 @@ __author__ = 'Petter'
 import unittest
 from pprint import pprint
 
-from lib.actor import Actor
-from lib.bazaar import Bazaar
+from Pan.lib.actor import Actor
+from Pan.lib.bazaar import Bazaar
 from Pan.lib.offer import Offer
 
 
@@ -59,8 +59,8 @@ class TestBazaar(unittest.TestCase):
         self.bazaar.resolve_offers("A")
 
         self.assertEqual(self.actors[0].get_inventory("A"), -1)
-        self.assertEqual(self.actors[0].get_money(), 1010)
-        self.assertEqual(self.actors[1].get_money(), 990)
+        self.assertEqual(self.actors[0].get_money(), 2010)
+        self.assertEqual(self.actors[1].get_money(), 1990)
         self.assertEqual(self.actors[1].get_inventory("A"), 1)
 
     def test_resolve_offers_B(self):
@@ -73,11 +73,12 @@ class TestBazaar(unittest.TestCase):
         self.bazaar.resolve_offers("A")
 
         self.assertEqual(self.actors[0].get_inventory("A"), -1)
-        self.assertEqual(self.actors[0].get_money(), 1007.5)
-        self.assertEqual(self.actors[1].get_money(), 992.5)
+        self.assertEqual(self.actors[0].get_money(), 2007.5)
+        self.assertEqual(self.actors[1].get_money(), 1992.5)
         self.assertEqual(self.actors[1].get_inventory("A"), 1)
 
     def test_simulate(self):
+        self.skipTest("Not implemented")
         commodities = {"A": {}, "B": {}, "C": {}, "AB": {"A":1, "B": 1}, "BC": {"B": 1, "C": 1}, "CA": {"C": 1, "A": 1}, "ABBC": {"AB": 1, "BC": 1}, "BCCA": {"BC": 1, "CA": 1}, "CAAB": {"CA":1,"AB":1}}
         actors = [Actor("A"),Actor("A"),Actor("A"), Actor("B"), Actor("B"), Actor("B"), Actor("C"), Actor("C"), Actor("C"), Actor("AB"), Actor("AB"), Actor("AB"), Actor("BC"), Actor("BC"), Actor("BC"), Actor("CA"), Actor("CA"), Actor("CA"), Actor("ABBC"), Actor("ABBC"), Actor("ABBC"), Actor("BCCA"), Actor("BCCA"), Actor("BCCA"), Actor("CAAB"), Actor("CAAB"), Actor("CAAB")]
         bazaar = Bazaar(commodities, actors)
